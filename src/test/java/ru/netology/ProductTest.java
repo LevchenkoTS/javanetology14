@@ -11,38 +11,38 @@ class ProductTest {
     Product product1 = new Book(1, "Книга 1", 500, "Автор1");
     Product product2 = new Smartphone(2, "Смартфон 1", 10_000, "производитель1");
     Product product3 = new Book(3, "Книга 1", 1_000, "Автор2");
+    Product product4 = new Smartphone(2, "Смартфон 2", 100_000, "производитель2");
 
 
 
     @Test
     public void add() {
 
-        repo.add(product1);
-        repo.add(product2);
-
-        Product[] expected = {product1, product2};
-        Product[] actual = repo.findAll();
-
-        Assertions.assertArrayEquals(expected, actual);
-
-    }
-
-    @Test
-
-    public void search() {
-
-
         manager.add(product1);
         manager.add(product2);
         manager.add(product3);
 
 
-        Product[] expected = {product2};
-        Product[] actual = manager.searchBy("Смартфон 1");
+        Product[] expected = {product1, product2, product3};
+        Product[] actual = repo.findAll();
 
         Assertions.assertArrayEquals(expected, actual);
 
+
     }
+
+    @Test
+    public void addWhenAlreadyExist() {
+        manager.add(product1);
+        manager.add(product2);
+        manager.add(product3);
+
+
+        Assertions.assertThrows(AlreadyExistsException.class,
+             () -> repo.add(product4));
+    }
+
+
 
     @Test
 
@@ -60,37 +60,17 @@ class ProductTest {
         Assertions.assertArrayEquals(expected, actual);
     }
 
+
     @Test
 
-    public void searchNull() {
-
+    public void removeByIdWhenNotFound() {
         manager.add(product1);
         manager.add(product2);
         manager.add(product3);
 
 
-        Product[] expected = {};
-        Product[] actual = manager.searchBy("Книга10");
-
-
-        Assertions.assertArrayEquals(expected, actual);
-
+        Assertions.assertThrows(NotFoundException.class,
+                () -> repo.removeById(5));
     }
-
-    @Test
-
-    public void searchTwoResult() {
-
-        manager.add(product1);
-        manager.add(product2);
-        manager.add(product3);
-
-        Product[] expected = {product1, product3};
-        Product[] actual = manager.searchBy("Книга 1");
-
-
-        Assertions.assertArrayEquals(expected, actual);
-
-        }
 
 }
